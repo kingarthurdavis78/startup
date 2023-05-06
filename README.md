@@ -4,16 +4,15 @@ The GPT Party Pack is a collection of party games infused with the power of the 
 
 ## Games
 
+### Not Like The Others (I'll start with this one)
+
+Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot an imposter among a sea of players through analysis and shrewd observation!
+
+---
 
 ### GPT Trivia
 
 Welcome to GPT Trivia! Our game uses GPT's state-of-the-art machine learning technology to constantly generate new and reliable questions, so you'll never run out of challenging and exciting trivia to test your knowledge. Compete against your friends and family to see who can get the highest score!
-
----
-
-### Not Like The Others
-
-Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot an imposter among a sea of players through analysis and shrewd observation!
 
 ---
 
