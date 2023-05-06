@@ -21,6 +21,8 @@ Step into a world of deception and deduction with 'Not Like The Others', the gam
 
 Wit Spit is a game of wit and speed where players must come up with the most creative and hilarious responses to a given prompt. The player with the most upvotes becomes the Wit Spit Champion!
 
+---
+
 ### Definitionary
 
 Definitionary is the ultimate word game where players are challenged to come up with the most convincing definition for a random word. Players then pick which definition they think is the most accurate and bonus points are awarded to those that pick the actual definition! The player with the most votes wins!
