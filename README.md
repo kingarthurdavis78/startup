@@ -56,14 +56,14 @@ I am going to use the required technologies in the following ways.
 ## Design Images
 
 ### Workflow
-![Workflow](gpt-party-pack/gpt-party-pack-2.png)
+![Workflow](design_pics/gpt-party-pack-2.png)
 
 ### Game Screenshots
-![Home](gpt-party-pack/gpt-party-pack-3.png)
+![Home](design_pics/gpt-party-pack-3.png)
 
-![GPT Trivia](gpt-party-pack/gpt-party-pack-4.png)
+![GPT Trivia](design_pics/gpt-party-pack-4.png)
 
-![Not Like The Others](gpt-party-pack/gpt-party-pack-5.png)
+![Not Like The Others](design_pics/gpt-party-pack-5.png)
 
-![Wit Spit](gpt-party-pack/gpt-party-pack-6.png)
+![Wit Spit](design_pics/gpt-party-pack-6.png)
 
