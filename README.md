@@ -23,7 +23,7 @@ Wit Spit is a game of wit and speed where players must come up with the most cre
 
 ### Definitionary
 
-Definitionary is the ultimate word game for anyone who loves a good laugh and wants to expand their vocabulary. In this game, players are presented with a random word and are challenged to come up with the most convincing definition, even if it's completely made up! After all the definitions have been submitted, players then vote on which one they think is the most accurate, with bonus points if they guess the actual definition! With endless word possibilities and hours of laughter, Definitionary is the perfect game to play with family and friends, whether you're a wordsmith or just looking for a good time!
+Definitionary is the ultimate word game for anyone who loves a good laugh and wants to expand their vocabulary. In this game, players are presented with a random word and are challenged to come up with the most convincing definition, even if it's completely made up! After all the definitions have been submitted, players then vote on which one they think is the most accurate, with bonus points given to those that guess the actual definition! With endless word possibilities and hours of laughter, Definitionary is the perfect game to play with family and friends, whether you're a wordsmith or just looking for a good time!
 
 ---
 ### Key features
