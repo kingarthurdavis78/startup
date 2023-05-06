@@ -1,10 +1,13 @@
 # THE GPT PARTY PACK
+
+The GPT Party Pack is a collection of party games infused with the power of the world renound language model, GPT!
+
 ## Games
 
 
 ### GPT Trivia
 
-Experience an endless array of challenging and exciting trivia questions powered by the world's most advanced language model, GPT!
+Experience an endless array of challenging and exciting trivia questions! Can you guess the right answer?
 
 ---
 
