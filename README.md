@@ -10,7 +10,7 @@ Experience an endless array of challenging and exciting trivia questions powered
 
 ### Not Like The Others
 
-Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot the one player with a unique question among a sea of impostors through witty responses and shrewd observation!
+Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot an imposter among a sea of players through analysis and shrewd observation!
 
 ---
 
