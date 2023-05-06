@@ -7,7 +7,7 @@ The GPT Party Pack is a collection of party games infused with the power of the 
 
 ### GPT Trivia
 
-Experience an endless array of challenging and exciting trivia questions! Can you guess the right answer?
+Welcome to GPT Trivia! Our game uses GPT's state-of-the-art machine learning technology to constantly generate new and reliable questions, so you'll never run out of challenging and exciting trivia to test your knowledge. Compete against your friends and family to see who can get the highest score!
 
 ---
 
@@ -23,7 +23,7 @@ Wit Spit is a game of wit and speed where players must come up with the most cre
 
 ### Definitionary
 
-Definitionary is the ultimate word game for anyone who loves a good laugh and wants to expand their vocabulary. In this game, players are presented with a random word and are challenged to come up with the most convincing definition, even if it's completely made up! After all the definitions have been submitted, players then vote on which one they think is the most accurate, with bonus points given to those that guess the actual definition! With endless word possibilities and hours of laughter, Definitionary is the perfect game to play with family and friends, whether you're a wordsmith or just looking for a good time!
+Definitionary is the ultimate word game where players are challenged to come up with the most convincing definition for a random word. Players then pick which definition they think is the most accurate and bonus points are awarded to those that pick the actual definition! The player with the most votes wins!
 
 ---
 ### Key features
