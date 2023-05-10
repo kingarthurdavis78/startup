@@ -75,14 +75,14 @@ For this deliverable I added the application structure.
 ## Design Images
 
 ### Workflow
-![Workflow](design_pics/gpt-party-pack-2.png)
+![Workflow](images/gpt-party-pack-2.png)
 
 ### Game Screenshots
-![Home](design_pics/gpt-party-pack-3.png)
+![Home](images/gpt-party-pack-3.png)
 
-![GPT Trivia](design_pics/gpt-party-pack-4.png)
+![GPT Trivia](images/gpt-party-pack-4.png)
 
-![Not Like The Others](design_pics/gpt-party-pack-5.png)
+![Not Like The Others](images/gpt-party-pack-5.png)
 
-![Wit Spit](design_pics/gpt-party-pack-6.png)
+![Wit Spit](images/gpt-party-pack-6.png)
 
