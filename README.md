@@ -58,6 +58,20 @@ I am going to use the required technologies in the following ways.
 
 ---
 
+## HTML deliverable
+
+For this deliverable I added the application structure.
+
+- **HTML pages** - 14 HTML pages that represent the ability to join a game, choose a game to host, respond to a prompt, vote, display the scoreboard,login, and create an account.
+- **Links** - Game Selection -> Waiting Room -> Game Instruction -> Response -> Voting -> Display Score -> Response or index
+- **Text** - All of the questions are represented as textual elements. The about section hosts a lot of text as well.
+- **Images** - Logo in the top left of the page. For each of the games there is an associated crown icon.
+- **Login** - Input box and submit button for login. Also option to create an account.
+- **Database** - The voting choices represent data pulled from the database. Questions are pulled from a database.
+- **WebSocket** - The count of voting results represent the tally of realtime votes.
+
+---
+
 ## Design Images
 
 ### Workflow
