@@ -1,6 +1,6 @@
-# THE GPT PARTY PACK
+# THE ARTificial PARTY PACK
 
-The GPT Party Pack is a collection of party games infused with the power of the world renound language model, GPT!
+The ARTificial Party Pack is a collection of party games infused with the power of the world renound language model, GPT!
 
 ## Games
 
