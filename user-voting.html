@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Not Like the Others!</title>
+    <link rel="stylesheet" type="text/css" href="mobile.css"/>
     <body>
-    <h1>USER NAME HERE</h1>
-    <h2>Who is the Imposter?</h2>
-    <form action="user-waiting.html" method="post">
-        <label for="Player1">Player1</label>
-        <input type="radio" id="Player1" name="varPlayer" value="Player1" />
+        <header>
+            <img src="../images/white-cover.svg" alt="KingArthur.click">
+        </header>
+    <main>
+        <h1>USER NAME HERE</h1>
+        <h2>Who is the Imposter?</h2>
+        <form action="user-waiting.html" method="post">
+            <label for="Player1">Player1</label>
+            <input class="radio" type="radio" id="Player1" name="varPlayer" value="Player1" />
+            <br>
+            <label for="Player2">Player2</label>
+            <input class="radio" type="radio" id="Player2" name="varPlayer" value="Player2" checked />
+            <br>
+            <label for="Player3">Player3</label>
+            <input class="radio" type="radio" id="Player3" name="varPlayer" value="Player3" />
+            <br>
+            <label for="Player4">Player4</label>
+            <input class="radio" type="radio" id="Player4" name="varPlayer" value="Player4" />
+            <br>
+            <label for="Player5">Player5</label>
+            <input class="radio" type="radio" id="Player5" name="varPlayer" value="Player5" />
+        </form>
         <br>
-        <label for="Player2">Player2</label>
-        <input type="radio" id="Player2" name="varPlayer" value="Player2" checked />
+        <a href="user-scores.html"> Submit</a>
         <br>
-        <label for="Player3">Player3</label>
-        <input type="radio" id="Player3" name="varPlayer" value="Player3" />
-        <br>
-        <label for="Player4">Player4</label>
-        <input type="radio" id="Player4" name="varPlayer" value="Player4" />
-        <br>
-        <label for="Player5">Player5</label>
-        <input type="radio" id="Player5" name="varPlayer" value="Player5" />
-        <br>
-        <button type="submit">Submit</button>
-    </form>
-    <a href="user-scores.html"> Next</a>
+        <a href="user-scores.html"> Next</a>
+    </main>
     <footer>
         <p>Created by: Arthur Hunter</p>
         <a href="https://github.com/kingarthurdavis78/startup">GitHub</a>
