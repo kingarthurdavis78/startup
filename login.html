@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <body>
-        <img src="../images/cover.png" alt="KingArthur.click" width=400>
-        <nav>
-            <li><a href="index.html">Play</a></li>
-            <li><a href="game-select.html">Host a Game</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="https://www.buymeacoffee.com/kingarthur78">Donate</a></li>
-            <li><a href="login.html">Log In</a></li>
-        </nav>
-        <h2>Login</h2>
+    <link rel="stylesheet" type="text/css" href="desktop.css" />
+    <link rel="icon" href="images/icon.svg" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<body>
+    <header>
+        <a href="index.html">
+            <img id="logo" src="../images/white-cover.svg" alt="KingArthur.click" width=400>
+        </a>
         <div>
-            <label for="login">Email:</label>
-            <input type="email" id="login" name="login">
+            <a class="menu" href="index.html">Play</a>
+            <a class="menu" href="game-select.html">Games</a>
+            <a class="menu" href="about.html">About</a>
+            <a class="menu" href="https://www.buymeacoffee.com/kingarthur78">Donate</a>
+            <a class="menu" href="login.html">Log In</a>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password">
-        </div>
-        <button type="submit">Login</button>
-        <p>Don't have an account? <a href="create-account.html">Create one here!</a></p>
-        <footer>
-            <p>Created by: Arthur Hunter</p>
-            <a href="https://github.com/kingarthurdavis78/startup">GitHub</a>
-        </footer>    
-    </body>
+    </header>
+    <main>
+        <br>
+        <input type="email" id="login" name="login" placeholder="EMAIL">
+        <br>
+        <input type="password" id="password" name="password" placeholder="PASSWORD">
+        <br>
+        <a class="play" href="game-select.html">LOGIN</a>
+        <p>Don't have an account?</p>
+        <a class="play" href="create-account.html">CREATE ACCOUNT</a>
+    </main>
+    <footer>
+        <p>Created by: Arthur Hunter</p>
+        <a href="https://github.com/kingarthurdavis78/startup">GitHub</a>
+    </footer>
+</body>
 </head>
+
 </html>

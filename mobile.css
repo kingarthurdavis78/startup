@@ -1,5 +1,5 @@
 * {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     color: white;
 }
 
@@ -13,17 +13,17 @@ a {
 
 }
 
-main > a {
+main>a {
     margin: 0 auto;
     border-radius: 10px;
     padding: 10px;
-    background-color: rgba(255,178,47,255);
+    background-color: rgba(255, 178, 47, 255);
     width: 400px;
     height: 25px;
     font-size: 21px;
 }
 
-main > a:hover {
+main>a:hover {
     color: rgb(50, 50, 50);
 }
 
@@ -32,10 +32,10 @@ p {
 }
 
 body {
-    display:flex;
+    display: flex;
     flex-direction: column;
     height: 100vh;
-    margin:0px; 
+    margin: 0px;
     background-color: rgb(50, 50, 50);
 }
 
@@ -56,7 +56,7 @@ img {
 
 main {
     flex: 1;
-    display:flex;
+    display: flex;
     flex-direction: column;
     text-align: center;
 }
@@ -66,7 +66,7 @@ main {
 
 footer {
     flex: 0 10vh;
-    background-color: rgba(255,178,47,255);
+    background-color: rgba(255, 178, 47, 255);
 }
 
 
@@ -77,13 +77,14 @@ input {
     margin: 0 auto;
     width: 400px;
     height: 25px;
+    font-size: 21px;
 }
 
 .radio {
     margin: 0 auto;
     width: 400px;
     height: 25px;
-    background-color: rgba(255,178,47,255);
+    background-color: rgba(255, 178, 47, 255);
     border-radius: 10px;
     padding: 10px;
     font-size: 21px;

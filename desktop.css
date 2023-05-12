@@ -1,33 +1,38 @@
 * {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     color: white;
+    font-size: 21px;
 }
 
 a {
     text-decoration: none;
-    font-size: 21px;
+}
+
+h3 {
+    text-align: center;
 }
 
 body {
-    display:flex;
+    display: flex;
     flex-direction: column;
     height: 100vh;
-    margin:0px; 
+    margin: 0px;
     background-color: rgb(50, 50, 50);
 }
 
 header {
     flex: 0 100px;
-    display:flex;
+    display: flex;
     flex-direction: row;
-    justify-content:space-between;
+    justify-content: space-between;
     align-items: center;
 }
 
 #logo {
-    width: 25vw;
-    height: 10vh;
     margin-left: 1vw;
+    flex: 0;
+    width: 25vw;
+    height: 100px;
 }
 
 .menu {
@@ -45,13 +50,15 @@ p {
 
 main {
     flex: 1;
-    display:flex;
+    display: flex;
     flex-direction: column;
+    background-color: rgb(60, 60, 60);
+    align-items: center;
 }
 
-.games {
+.grid {
     flex: 1;
-    display:flex;
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
@@ -59,28 +66,109 @@ main {
 }
 
 .game {
-    flex: 0;
     margin: 10px;
-    padding: 10px;
-    background-color: rgb(60, 60, 60);
+    padding: 30px;
+    background-color: rgb(70, 70, 70);
     border-radius: 10px;
-    display:flex;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    width: 20vw;
+    height: 20vw;
 }
 
 .play {
     margin: 0 auto;
     border-radius: 10px;
     padding: 10px;
-    background-color: rgba(255,178,47,255);
+    background-color: rgba(255, 178, 47, 255);
     height: 25px;
+}
+
+.response {
+    margin: 10px;
+    padding: 30px;
+    background-color: rgb(70, 70, 70);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 25vw;
+    height: 7vw;
 }
 
 footer {
     flex: 0 10vh;
-    background-color: rgba(255,178,47,255);
+    background-color: rgba(255, 178, 47, 255);
 }
 
+aside {
+    float: right;
+    padding: 0px;
+    margin: 0 auto;
+    width: 200px;
+    border: 0px;
+    padding-right: 50px;
+    padding-top: 25px;
 
+}
+
+#profile {
+    width: 200px;
+    margin: 0 auto;
+    padding: 0px;
+    border: 0px;
+    border-radius: 10px;
+}
+
+#text {
+    display: block;
+    margin: 0 auto;
+    padding: 0px;
+    border: 0px;
+    padding-left: 50px;
+}
+
+input {
+    border-radius: 10px;
+    padding: 10px;
+    background-color: white;
+    margin: 0 auto;
+    width: 400px;
+    height: 25px;
+    font-size: 21px;
+    color: rgb(60, 60, 60);
+}
+
+.room {
+    flex: 0 15vw;
+    margin: 0 auto;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: rgba(255, 178, 47, 255);
+    height: 25px;
+    margin-right: 5vw;
+    margin-left: 5vw;
+    font-size: min(21px, 1.5vw);
+    text-align: center;
+}
+
+.title {
+    flex: 1;
+    text-align: center;
+    align-self: center;
+}
+
+.play:hover {
+    color: rgb(50, 50, 50);
+}
+
+video {
+    background-color: rgba(255, 178, 47, 255);
+    border-radius: 10px;
+    padding: 10px;
+    width: 600px;
+    height: 400px;
+}
