@@ -99,6 +99,19 @@ main {
     height: 7vw;
 }
 
+.player {
+    margin: 10px;
+    padding: 30px;
+    background-color: rgb(70, 70, 70);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 20vw;
+    height: fit-content;
+}
+
 footer {
     flex: 0 10vh;
     background-color: rgba(255, 178, 47, 255);
@@ -136,7 +149,7 @@ input {
     padding: 10px;
     background-color: white;
     margin: 0 auto;
-    width: 400px;
+    width: 300px;
     height: 25px;
     font-size: 21px;
     color: rgb(60, 60, 60);
@@ -171,4 +184,35 @@ video {
     padding: 10px;
     width: 600px;
     height: 400px;
+}
+
+@media (orientation: portrait) {
+    .game {
+        width: 80vw;
+        height: 80vw;
+    }
+
+    .response {
+        width: 80vw;
+        height: 20vw;
+    }
+
+    .player {
+        width: 80vw;
+        height: fit-content;
+    }
+
+    input {
+        width: 80vw;
+    }
+
+    video {
+        width: 80vw;
+        height: 40vw;
+    }
+
+    .menu {
+        padding-right: 0vw;
+        font-size: 18px;
+    }
 }
