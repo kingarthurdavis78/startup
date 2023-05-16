@@ -75,11 +75,11 @@ For this deliverable I added the application structure.
 For this deliverable I properly styled the application into its final appearance.
 
 - Header, footer, and main content body
-- Navigation elements - I removed text decoration
-- Responsive to window resizing - My app looks great on all window sizes and devices. 
-- Application elements - Used good contrast and whitespace
-- Application text content - Consistent font size and color
-- Application images - I added two icons and a profile photo
+- **Navigation elements** - I removed text decoration
+- **Responsive to window resizing** - My app looks great on all window sizes and devices. 
+- **Application elements** - Used good contrast and whitespace
+- **Application text content** - Consistent font size and color
+- **Application images** - I added two icons and a profile photo
 
 ---
 
