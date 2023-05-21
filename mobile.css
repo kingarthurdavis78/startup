@@ -7,13 +7,7 @@ h1 {
     margin: 0;
 }
 
-a {
-    text-decoration: none;
-    padding: 5px;
-
-}
-
-main>a {
+main>p {
     margin: 0 auto;
     border-radius: 10px;
     padding: 10px;
@@ -23,12 +17,9 @@ main>a {
     font-size: 21px;
 }
 
-main>a:hover {
+main>p:hover {
     color: rgb(50, 50, 50);
-}
-
-p {
-    padding: 5px;
+    cursor: pointer;
 }
 
 body {
