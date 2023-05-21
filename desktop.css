@@ -9,7 +9,7 @@ a {
 }
 
 h3 {
-    text-align: center;
+    text-align: center
 }
 
 body {
@@ -104,12 +104,9 @@ main {
     padding: 30px;
     background-color: rgb(70, 70, 70);
     border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    width: 20vw;
-    height: fit-content;
+    width: 25vw;
+    height: 8vw;
+    text-align: center;
 }
 
 footer {
@@ -125,7 +122,13 @@ aside {
     border: 0px;
     padding-right: 50px;
     padding-top: 25px;
+}
 
+#clock {
+    float: left;
+    padding: 0px;
+    margin: 0 auto;
+    width: auto;
 }
 
 #profile {
@@ -138,10 +141,11 @@ aside {
 
 #text {
     display: block;
-    margin: 0 auto;
-    padding: 0px;
-    border: 0px;
-    padding-left: 50px;
+}
+
+#text > p {
+    margin-left: 10px;
+    padding-left: 10px;
 }
 
 input {

@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="mobile.css" />
     <link rel="icon" href="images/icon.svg" type="image/svg+xml">
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-
+    <script defer src="mobile.js"></script>
+</head>
 <body>
     <header>
         <img src="../images/white-cover.svg" alt="KingArthur.click">
@@ -15,9 +16,9 @@
     <main>
         <input type="text" id="name" name="name" placeholder="DISPLAY NAME">
         <br>
-        <input type="text" id="room" name="room" placeholder="ROOM CODE">
+        <input type="text" id="room" name="room" placeholder="ROOM CODE" maxlength="4">
         <br>
-        <a href="user-waiting.html">JOIN ROOM</a>
+        <p onclick="joinGame()">JOIN ROOM</p>
         <br>
         <a href="game-select.html">HOST A GAME</a>
     </main>
@@ -26,6 +27,4 @@
         <a href="https://github.com/kingarthurdavis78/startup">GitHub</a>
     </footer>
 </body>
-</head>
-
 </html>
