@@ -1,4 +1,5 @@
-numPlayers = 5;
+let players = [];
+let player;
 
 class Player {
     constructor(name, roomCode) {
@@ -10,27 +11,34 @@ class Player {
     }
 }
 
+function validRoomCode(roomCode) {
+    return true;
+}
 
 function joinGame() {
     let name = document.getElementById("name").value;
     let roomCode = document.getElementById("room").value;
-    let player = new Player(name, roomCode);
+    if (!validRoomCode(roomCode)) {
+        alert("Invalid room code");
+        return;
+    }
+    player = new Player(name.toUpperCase(), roomCode);
     toWaitingScreen();
 }
 
 function toWaitingScreen() {
     let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>USER NAME HERE</h1><h2> Waiting...</h2>';
+    mainElements.innerHTML = '<h1>' + player.name + '</h1><h2> Waiting...</h2>';
 }
 
 function toResponseScreen() {
     var mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>USER NAME HERE</h1><h2>QUESTION</h2><input type="text" id="response" name="response" placeholder="RESPOND HERE"><br><p onclick="submitResponse()"> SUBMIT</p><br><p onclick="generateResponse()"> GENERATE RESPONSE</p>';
+    mainElements.innerHTML = '<h1>' + player.name + '</h1><h2>QUESTION</h2><input type="text" id="response" name="response" placeholder="RESPOND HERE"><br><p onclick="submitResponse()"> SUBMIT</p><br><p onclick="generateResponse()"> GENERATE RESPONSE</p>';
 }
 
 function toVotingScreen() {
     var mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>USER NAME HERE</h1>';
+    mainElements.innerHTML = '<h1>' + player.name + '</h1>';
     for (let i=1; i<=numPlayers; i++) {
         mainElements.innerHTML += '<p onclick="postVote('+i+')" id="'+i+'">player name '+i+'</p><br>';
     }
