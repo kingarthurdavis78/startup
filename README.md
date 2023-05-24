@@ -81,6 +81,15 @@ For this deliverable I properly styled the application into its final appearance
 - **Application text content** - Consistent font size and color
 - **Application images** - I added two icons and a profile photo
 
+## JavaScript deliverable
+
+login - When you press enter or the login button it creates a User object that is ready to be sent to the server
+database - not implemented yet
+WebSocket - not implemented yet
+application logic (Host)- Once you start the game, it takes the host through three rounds. Each round consists of a user response period, voting period, and then a dispay of the scoreboard. At the end of the game it takes the host back to the game select menu.
+application logic (User)- The player creates a Player object and joins a server. The player object is how responses and votes are sent to the server. As the game progresses the user provides a response and a vote for each round.
+
+
 ---
 
 ## Design Images
