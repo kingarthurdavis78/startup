@@ -7,4 +7,3 @@ class Player {
     this.score = 0;
     }
 }
-
