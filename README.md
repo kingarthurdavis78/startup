@@ -89,6 +89,15 @@ WebSocket - not implemented yet
 application logic (Host)- Once you start the game, it takes the host through three rounds. Each round consists of a user response period, voting period, and then a dispay of the scoreboard. At the end of the game it takes the host back to the game select menu.
 application logic (User)- The player creates a Player object and joins a server. The player object is how responses and votes are sent to the server. As the game progresses the user provides a response and a vote for each round.
 
+## Service deliverable 
+
+For this deliverable I created an HTTP service to host my frontend and provide backend endpoints.
+
+Node.js/Express HTTP service - done!
+Static middleware for frontend - done!
+Calls to third party endpoints - I don't need this for my website
+Backend service endpoints - Placeholders for login that stores the current user on the server. Endpoints for player and game state.
+Frontend calls service endpoints - I did this using the fetch function.
 
 ---
 
