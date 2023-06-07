@@ -99,6 +99,14 @@ Calls to third party endpoints - I don't need this for my website
 Backend service endpoints - Placeholders for login that stores the current user on the server. Endpoints for player and game state.
 Frontend calls service endpoints - I did this using the fetch function.
 
+## DB deliverable
+For this deliverable I stored and retrieved data from MongoDB.
+
+MongoDB Atlas database created - done!
+Populated database with game questions
+Endpoints for data - My stubbed out endpoints now process the data and send it to Mongo. 
+Stores data in MongoDB - done!
+
 ---
 
 ## Design Images
