@@ -1,4 +1,12 @@
 // Account creation and login
+(async () => {
+    const email = localStorage.getItem('email');
+    if (email) {
+      let loginItem = document.querySelector('#login');
+      loginItem.innerText = 'Logout';
+      loginItem.onClick = logOut();
+    }
+  })();
 
 
 class User {
@@ -10,12 +18,22 @@ class User {
     }
 }
 
+function logOut() {
+    let email = localStorage.getItem('email');
+    fetch(`/user/` + email, {method: 'delete'});
+    localStorage.removeItem('email');
+    window.location.href = '/game-select.html';
+}
+
 async function login() {
     let email = document.getElementById("email").value;
+    console.log(email);
     let password = document.getElementById("password").value;
+    console.log(password);
     let res = await fetch('/user/' + email + '/' + password).then(response => response.json());
     alert(res.message);
     if (res.success) {
+        localStorage.setItem('email', email);
         window.location.href = '/game-select.html';
     }
 }
@@ -34,6 +52,7 @@ async function createAccount() {
     let res = await fetch('/user/' + user.name, { method: 'POST', body: JSON.stringify(user), headers: { 'Content-Type': 'application/json' } }).then(response => response.json());
     alert(res.message);
     if (res.success) {
+        localStorage.setItem('email', email);
         window.location.href = '/game-select.html';
     }
 }

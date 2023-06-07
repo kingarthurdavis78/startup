@@ -19,8 +19,18 @@
             <a class="menu" href="game-select.html">Games</a>
             <a class="menu" href="about.html">About</a>
             <a class="menu" href="https://www.buymeacoffee.com/kingarthur78">Donate</a>
-            <a class="menu" href="login.html">Log In</a>
+            <a class="menu" id="login" href="login.html">Log In</a>
         </div>
+        <script>
+            (async () => {
+                const email = localStorage.getItem('email');
+                if (email) {
+                  let loginItem = document.querySelector('#login');
+                  loginItem.innerText = 'Logout';
+                  loginItem.onClick = logOut();
+                }
+              })();
+        </script>
     </header>
     <main id="text">
         <aside>

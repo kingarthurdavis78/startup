@@ -16,6 +16,10 @@ const db = client.db('NotLikeTheOthers');
 // Connect to database
 client.connect();
 
+async function getUser(email) {
+    let users = db.collection('users');
+    return await users.findOne({ email: email });
+}
 
 async function getQuestions() {
     let quesitons = db.collection('questions');
@@ -40,7 +44,7 @@ async function createAccount(userData) {
             token: uuid.v4()
         }
         users.insertOne(user);
-        return {user: user, success: true};
+        return {user: user, message: "Account Created", success: true};
     } catch (e) {
         console.log(e);
         return {message: e.message, success: false};
@@ -49,9 +53,9 @@ async function createAccount(userData) {
 
 async function login(email, password) {
     let users = db.collection('users');
-    let result = await users.findOne({ email: email, password: password });
-    if (result) {
-        return true;
+    let user = await users.findOne({ email: email});
+    if (await bcrypt.compare(password, user.password)) {
+        return user;
     }
     return false;
 }
@@ -211,8 +215,9 @@ app.delete('/player/:name/:roomcode', (req, res) => {
 app.get('/user/:email/:password', async (req, res) => {
     console.log('Logging In ' + req.params.email);
 
-    let success = await login(req.params.email, req.params.password);
-    if (success) {
+    let user = await login(req.params.email, req.params.password);
+    if (user) {
+        setAuthCookie(res, user.token);
         res.json({ message: 'User ' + req.params.email + ' logged in', success: true });
     } else {
         res.json({ message: 'User ' + req.params.email + ' not logged in', success: false });
@@ -223,16 +228,35 @@ app.post('/user/:name', async (req, res) => {
     console.log('Creating ' + req.params.name);
     let result = await createAccount(req.body);
     if (result.success) {
-
         setAuthCookie(res, result.user.token);
 
         res.status(200);
     } else {
         res.status(400);
-    }2345678
+    }
 
     res.json(result);
 
+});
+
+app.delete('/user/:email', (req, res) => {
+    console.log('Loggin out ' + req.params.email);
+    res.clearCookie(authCookieName);
+    res.json({ message: 'User ' + req.params.email + ' deleted', success: true });
+});
+
+app.get('/auth/:email', async (req, res) => {
+    if (!req.cookies.token) {
+        res.json({ message: 'Please log in to host a game', success: false });
+        return;
+    }
+    let user = await getUser(req.params.email);
+    if (user) {
+        const token = req?.cookies.token;
+        res.json({ message: 'User ' + req.params.email + ' found', success: token === user.token });
+    } else {
+        res.json({ message: 'Please log in to host a game', success: false });
+    }
 });
 
 
