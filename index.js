@@ -1,6 +1,8 @@
 // Express server for Not Like The Others
 let express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
+const uuid = require('uuid');
 const app = express();
 
 // Database
@@ -23,14 +25,25 @@ async function getQuestions() {
     return gameQuestions;
 }
 
-async function createAccount(user) {
+async function createAccount(userData) {
     try {
         let users = db.collection('users');
-        users.insertOne({ name: user.name, email: user.email, password: user.password });
-        return true;
+        let potentialUser = await users.findOne({ email: userData.email });
+        if (potentialUser) {
+            throw new Error('Email already in use');
+        }
+        const passwordHash = await bcrypt.hash(userData.password, 10);
+        const user = {
+            name: userData.name,
+            email: userData.email,
+            password: passwordHash,
+            token: uuid.v4()
+        }
+        users.insertOne(user);
+        return {user: user, success: true};
     } catch (e) {
         console.log(e);
-        return false;
+        return {message: e.message, success: false};
     }
 }
 
@@ -43,7 +56,26 @@ async function login(email, password) {
     return false;
 }
 
+// Cookie Stuff
+
+const authCookieName = 'token';
+
+// setAuthCookie in the HTTP response
+function setAuthCookie(res, authToken) {
+    res.cookie(authCookieName, authToken, {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+    });
+  }
+
+app.use(express.json());
+
 app.use(cookieParser());
+
+app.use(express.static('public'));
+
+app.set('trust proxy', true);
 
 app.post('/cookie/:name/:value', (req, res, next) => {
     res.cookie(req.params.name, req.params.value);
@@ -56,22 +88,10 @@ app.get('/cookie', (req, res, next) => {
 
 let games = [];
 
-app.use(express.static('public'));
 
 app.get('/', (req, res) => {
     res.sendFile('/public/index.html');
 });
-
-
-app.use(express.json());
-
-// Disable Cors
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});
-
 
 // Game routes
 
@@ -201,13 +221,17 @@ app.get('/user/:email/:password', async (req, res) => {
 
 app.post('/user/:name', async (req, res) => {
     console.log('Creating ' + req.params.name);
-    let success = await createAccount(req.body);
-    if (success) {
-        res.json({ message: 'User ' + req.params.name + ' created', success: true });
-    }
-    else {
-        res.json({ message: 'User ' + req.params.name + ' not created', success: false });
-    }
+    let result = await createAccount(req.body);
+    if (result.success) {
+
+        setAuthCookie(res, result.user.token);
+
+        res.status(200);
+    } else {
+        res.status(400);
+    }2345678
+
+    res.json(result);
 
 });
 
