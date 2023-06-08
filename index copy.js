@@ -14,7 +14,8 @@ const db = client.db('NotLikeTheOthers');
 client.connect();
 
 // Websocket
-const {WebSocketServer} = require('ws');
+const { WebSocketServer } = require('ws');
+const e = require('express');
 
 async function getUser(email) {
     let users = db.collection('users');
@@ -44,16 +45,16 @@ async function createAccount(userData) {
             token: uuid.v4()
         }
         users.insertOne(user);
-        return {user: user, message: "Account Created", success: true};
+        return { user: user, message: "Account Created", success: true };
     } catch (e) {
         console.log(e);
-        return {message: e.message, success: false};
+        return { message: e.message, success: false };
     }
 }
 
 async function login(email, password) {
     let users = db.collection('users');
-    let user = await users.findOne({ email: email});
+    let user = await users.findOne({ email: email });
     if (await bcrypt.compare(password, user.password)) {
         return user;
     }
@@ -67,11 +68,11 @@ const authCookieName = 'token';
 // setAuthCookie in the HTTP response
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-      secure: true,
-      httpOnly: true,
-      sameSite: 'strict',
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
     });
-  }
+}
 
 app.use(express.json());
 
@@ -151,8 +152,6 @@ let server = app.listen(4000, () => console.log('listening at %s', server.addres
 
 // Game routes
 
-let games = [];
-
 const wss = new WebSocketServer({ noServer: true });
 
 function generateRoomCode() {
@@ -167,15 +166,18 @@ function generateRoomCode() {
 // Handle the protocol upgrade from HTTP to WebSocket
 server.on('upgrade', (request, socket, head) => {
     wss.handleUpgrade(request, socket, head, function done(ws) {
-      wss.emit('connection', ws, request);
+        wss.emit('connection', ws, request);
     });
-  });
+});
+
+let games = [];
+
 
 app.post('/game', async (req, res) => {
     console.log('Creating game');
     let questions = await getQuestions();
     let roomCode = generateRoomCode();
-    let game = {roomCode: roomCode, questions: questions, players: []};
+    let game = { roomCode: roomCode, questions: questions, players: [], connections: [], hostConnection: null, playersFinished: 0 };
     games.push(game);
     res.json(JSON.stringify(game));
 });
@@ -183,14 +185,68 @@ app.post('/game', async (req, res) => {
 app.get('/game/:roomCode', async (req, res) => {
     let game = games.find(game => game.roomCode === req.params.roomCode);
     if (game === undefined) {
-        res.json(JSON.stringify({success: false}));
+        res.json(JSON.stringify({ success: false }));
     } else {
-        res.json(JSON.stringify({success: true}));
+        res.json(JSON.stringify({ success: true }));
     }
 });
 
+
 wss.on('connection', (ws) => {
-    
+    console.log('Client connected');
+
+    ws.on('message', (message) => {
+        message = JSON.parse(message);
+        let game = games.find(game => game.roomCode === message.roomCode);
+        if (message.messageType === 'create-host') {
+            console.log('Created the host');
+            game.hostConnection = ws;
+        } else if (message.messageType === 'join-game') {
+            console.log(message.player.name + ' joined the game');
+            message.player.connection = ws;
+            game.players.push(message.player);
+            ws.send(JSON.stringify({ messageType: 'game-joined' }));
+            game.hostConnection.send(JSON.stringify({ messageType: 'player-joined', playerName: message.player.name }));
+        } else if (message.messageType === 'responding') {
+            console.log('Responding');
+            // Select imposter
+            let imposterIndex = Math.floor(Math.random() * game.players.length);
+            game.players[imposterIndex].imposter = true;
+            let questions = [];
+            let fakeQuestions = [];
+            for (let i = 0; i < 3; i++) {
+                let questionPair = game.questions.pop(i);
+                questions.push(questionPair.question);
+                fakeQuestions.push(questionPair.fakeQuestion);
+            }
+            let playerNames = [];
+            game.players.forEach(player => {
+                playerNames.push(player.name);
+            });
+            game.hostConnection.send(JSON.stringify({ messageType: 'responding', playerNames: playerNames }));
+            game.players.forEach(player => {
+                if (player.imposter) {
+                    player.connection.send(JSON.stringify({ messageType: 'responding', questions: fakeQuestions }));
+                } else {
+                    player.connection.send(JSON.stringify({ messageType: 'responding', questions: questions }));
+                }
+            });
+        } else if (message.messageType === 'player-response') {
+            console.log('Player response');
+            let player = game.players.find(player => player.name === message.player.name);
+            player.responses = message.player.responses;
+            game.hostConnection.send(JSON.stringify({ messageType: 'player-response', player: message.player.name }));
+            game.playersFinished++;
+            if (game.playersFinished === game.players.length) {
+                game.playersFinished = 0;
+                game.hostConnection.send(JSON.stringify({ messageType: 'voting' }));
+            }
+        } else if (message.messageType === 'voting') {
+            console.log('Voting');
+            game.hostConnection.send(JSON.stringify({ messageType: 'voting' }));
+        }
+    });
+
     ws.on('close', () => {
         console.log('Client disconnected');
     });
