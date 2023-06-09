@@ -8,13 +8,14 @@ const app = express();
 // Database
 const { MongoClient } = require('mongodb');
 const cfg = require('./dbConfig.json');
-const e = require('express');
 const url = `mongodb+srv://${cfg.userName}:${cfg.password}@${cfg.hostName}`;
 const client = new MongoClient(url);
 const db = client.db('NotLikeTheOthers');
-
-// Connect to database
 client.connect();
+
+// Websocket
+const { WebSocketServer } = require('ws');
+const e = require('express');
 
 async function getUser(email) {
     let users = db.collection('users');
@@ -23,9 +24,7 @@ async function getUser(email) {
 
 async function getQuestions() {
     let quesitons = db.collection('questions');
-
-    let gameQuestions = await quesitons.aggregate([{ $sample: { size: 7 } }]).toArray();
-
+    let gameQuestions = await quesitons.aggregate([{ $sample: { size: 9 } }]).toArray();
     return gameQuestions;
 }
 
@@ -44,16 +43,16 @@ async function createAccount(userData) {
             token: uuid.v4()
         }
         users.insertOne(user);
-        return {user: user, message: "Account Created", success: true};
+        return { user: user, message: "Account Created", success: true };
     } catch (e) {
         console.log(e);
-        return {message: e.message, success: false};
+        return { message: e.message, success: false };
     }
 }
 
 async function login(email, password) {
     let users = db.collection('users');
-    let user = await users.findOne({ email: email});
+    let user = await users.findOne({ email: email });
     if (await bcrypt.compare(password, user.password)) {
         return user;
     }
@@ -67,11 +66,11 @@ const authCookieName = 'token';
 // setAuthCookie in the HTTP response
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-      secure: true,
-      httpOnly: true,
-      sameSite: 'strict',
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
     });
-  }
+}
 
 app.use(express.json());
 
@@ -90,125 +89,10 @@ app.get('/cookie', (req, res, next) => {
     res.send({ cookie: req.cookies });
 });
 
-let games = [];
-
-
 app.get('/', (req, res) => {
     res.sendFile('/public/index.html');
 });
 
-// Game routes
-
-app.get('/game/:roomcode', (req, res) => {
-    for (let game of games) {
-        if (req.params.roomcode == game.roomCode) {
-            res.json({
-                gameType: game.gameType,
-                questions: game.questions,
-                roomCode: game.roomCode,
-                players: game.players,
-                state: game.state,
-                round: game.round
-            });
-            return;
-        }
-    }
-    console.log('Game ' + req.params.roomcode + ' not found');
-    res.json({ message: 'Game ' + req.params.roomcode + ' not found' });
-});
-
-app.post('/game/:roomcode', async (req, res) => {
-    console.log('Creating game ' + req.params.roomcode);
-    let questions = await getQuestions();
-    let game = { gameType: "NotLikeTheOthers", questions: questions, roomCode: req.params.roomcode, players: [], state: 'waiting', round: 0 };
-    games.push(game);
-    res.send('Game ' + req.params.roomcode + ' added');
-});
-
-app.put('/game/:roomcode', (req, res) => {
-    for (let game of games) {
-        if (game.roomCode == req.params.roomcode) {
-            game.state = req.body.state;
-            game.questions = req.body.questions;
-            game.players = req.body.players;
-            game.round = req.body.round;
-            res.json(game);
-            return;
-        }
-    }
-    res.json({ message: 'Game ' + req.params.roomcode + ' not updated' });
-});
-
-app.delete('/game/:roomcode', (req, res) => {
-    console.log('Deleting game ' + req.params.roomcode);
-    for (let game of games) {
-        if (game.roomCode == req.params.roomcode) {
-            games.pop(game);
-            delete game;
-            res.send('Game ' + req.params.roomcode + ' deleted');
-            return;
-        }
-    }
-    res.send('Game ' + req.params.roomcode + ' not found');
-});
-
-
-// Player routes
-
-app.get('/player/:name/:roomcode', (req, res) => {
-    console.log('Sending ' + req.params.name);
-    for (let game of games) {
-        if (req.params.roomcode == game.roomCode && req.params.name == player.name) {
-            res.json(player);
-            return;
-        }
-    }
-    res.send('Player ' + req.params.name + ' not found');
-});
-
-app.post('/player/:name/:roomcode', (req, res) => {
-    console.log('Adding ' + req.params.name);
-    for (let game of games) {
-        if (req.params.roomcode.toUpperCase() == game.roomCode) {
-            let player = { name: req.params.name.toUpperCase(), roomCode: req.params.roomcode.toUpperCase(), questions: [], responses: [], vote: "", score: 0 }
-            game.players.push(player);
-            res.json({ message: 'Player ' + req.params.name + ' added', success: true });
-            return;
-        }
-    }
-    res.json({ message: 'Game ' + req.params.roomcode + ' not found', success: false });
-});
-
-app.put('/player/:name/:roomcode', (req, res) => {
-    console.log('Updating ' + req.params.name);
-    for (let game of games) {
-        if (req.params.roomcode == game.roomCode) {
-            for (let player of game.players) {
-                if (req.params.name == player.name) {
-                    player.quesitons = req.body.questions;
-                    player.responses = req.body.responses;
-                    player.vote = req.body.vote;
-                    player.score = req.body.score;
-                    res.json({ message: 'Player ' + req.params.name + ' updated' });
-                    return;
-                }
-            }
-        }
-    }
-    res.json({ message: 'Player ' + req.params.name + ' not found' });
-});
-
-app.delete('/player/:name/:roomcode', (req, res) => {
-    console.log('Deleting ' + req.params.name);
-    for (let game of games) {
-        if (req.params.roomcode == game.roomCode) {
-            game.players.pop(player);
-            res.send('Player ' + req.params.name + ' deleted');
-            return;
-        }
-    }
-    res.send('Player ' + req.params.name + ' not found');
-});
 
 // User routes
 
@@ -262,4 +146,151 @@ app.get('/auth/:email', async (req, res) => {
 
 // Initialize server
 
-let server = app.listen(4000, () => console.log('listening at %s%s', server.address().address, server.address().port));
+let server = app.listen(4000, () => console.log('listening at %s', server.address().port));
+
+// Game routes
+
+const wss = new WebSocketServer({ noServer: true });
+
+function generateRoomCode() {
+    let roomCode = '';
+    for (let i = 0; i < 4; i++) {
+        num = Math.floor(Math.random() * 26);
+        roomCode += String.fromCharCode(65 + num);
+    }
+    return roomCode.toUpperCase();
+}
+
+// Handle the protocol upgrade from HTTP to WebSocket
+server.on('upgrade', (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+        wss.emit('connection', ws, request);
+    });
+});
+
+let games = [];
+
+
+app.post('/game', async (req, res) => {
+    console.log('Creating game');
+    let questions = await getQuestions();
+    let roomCode = generateRoomCode();
+    let game = { roomCode: roomCode, questions: questions, players: [], connections: [], hostConnection: null, playersFinished: 0, round: 1};
+    games.push(game);
+    res.json(JSON.stringify(game));
+});
+
+app.get('/game/:roomCode', async (req, res) => {
+    let game = games.find(game => game.roomCode === req.params.roomCode);
+    if (game === undefined) {
+        res.json(JSON.stringify({ success: false }));
+    } else {
+        res.json(JSON.stringify({ success: true }));
+    }
+});
+
+
+wss.on('connection', (ws) => {
+
+    ws.on('message', (message) => {
+        message = JSON.parse(message);
+        let game = games.find(game => game.roomCode === message.roomCode);
+        if (message.messageType === 'create-host') {
+
+            game.hostConnection = ws;
+        } else if (message.messageType === 'join-game') {
+            console.log(message.player.name + ' joined the game');
+            message.player.connection = ws;
+            game.players.push(message.player);
+            ws.send(JSON.stringify({ messageType: 'game-joined' }));
+            game.hostConnection.send(JSON.stringify({ messageType: 'player-joined', playerName: message.player.name }));
+        } else if (message.messageType === 'responding') {
+
+            // Select imposter
+            let imposterIndex = Math.floor(Math.random() * game.players.length);
+            game.players[imposterIndex].imposter = true;
+            let questions = [];
+            let fakeQuestions = [];
+            for (let i = 0; i < 3; i++) {
+                let questionPair = game.questions.pop(i);
+                questions.push(questionPair.question);
+                fakeQuestions.push(questionPair.fakeQuestion);
+            }
+            let playerNames = [];
+            game.players.forEach(player => {
+                playerNames.push(player.name);
+            });
+            game.hostConnection.send(JSON.stringify({ messageType: 'responding', playerNames: playerNames }));
+            game.players.forEach(player => {
+                if (player.imposter) {
+                    player.connection.send(JSON.stringify({ messageType: 'responding', questions: fakeQuestions }));
+                } else {
+                    player.connection.send(JSON.stringify({ messageType: 'responding', questions: questions }));
+                }
+            });
+        } else if (message.messageType === 'player-response') {
+
+            let player = game.players.find(player => player.name === message.player.name);
+            player.responses = message.player.responses;
+            game.hostConnection.send(JSON.stringify({ messageType: 'player-response', player: message.player.name }));
+            game.playersFinished++;
+            if (game.playersFinished === game.players.length) {
+                game.playersFinished = 0;
+
+                game.hostConnection.send(JSON.stringify({ messageType: 'All players responded'}));
+            }
+        } else if (message.messageType === 'voting') {
+
+            let votingData = [];
+            game.players.forEach(player => {
+                let playerData = { name: player.name, responses: player.responses };
+                votingData.push(playerData);
+            });
+            game.hostConnection.send(JSON.stringify({ messageType: 'voting', votingData: votingData }));
+        } else if (message.messageType === 'next-vote') {
+            let playerNames = [];
+            game.players.forEach(player => {
+                playerNames.push(player.name);
+            });
+            game.players.forEach(player => {
+                player.connection.send(JSON.stringify({ messageType: 'next-vote', playerNames: playerNames}));
+            });
+        } else if (message.messageType === 'player-vote') {
+            let imposter = game.players.filter(player => player.imposter)[0].name;
+            let gameIndex = games.indexOf(game);
+            let playerIndex = game.players.indexOf(game.players.find(player => player.name === message.player.name));
+            if (message.vote == imposter) {
+                games[gameIndex].players[playerIndex].score += 500 * game.round;
+            }
+
+        } else if (message.messageType === 'results') {
+            let playerData = [];
+            game.players.forEach(player => {
+                playerData.push({ name: player.name, score: player.score, imposter: player.imposter, responses: player.responses, round: game.round });
+                player.imposter = false;
+                player.responses = [];
+            });
+            game.hostConnection.send(JSON.stringify({ messageType: 'results', playerData: playerData }));
+            game.players.forEach(player => {
+                player.connection.send(JSON.stringify({ messageType: 'results', playerData: playerData }));
+            });
+            game.round++;
+        } else if (message.messageType === 'end-game') {
+            game.players.forEach(player => {
+                player.connection.send(JSON.stringify({ messageType: 'end-game' }));
+            });
+            let gameIndex = games.indexOf(game);
+            games.splice(gameIndex, 1);
+        }
+    });
+
+    ws.on('close', () => {
+        // Remove player from game
+        games.forEach(game => {
+            let playerIndex = game.players.indexOf(game.players.find(player => player.connection === ws));
+            if (playerIndex !== -1) {
+                game.players.splice(playerIndex, 1);
+            }
+        });
+    });
+});

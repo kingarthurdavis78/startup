@@ -1,121 +1,88 @@
 let myPlayer;
-
-window.addEventListener('beforeunload', (event) => {
-    event.preventDefault();
-});
-
-async function runGame() {
-    let game = await getGame();
-    while (true) {
-        game = await getGame();
-        console.log(game.state);
-        if (game.state == 'waiting' || game.state == 'instruction') {
-            toWaitingScreen();
-        }
-        if (game.state == 'responding') {
-            toResponseScreen();
-            await sleep(10000);
-        }
-        if (game.state == 'voting') {
-            toVotingScreen();
-            await sleep(5000);
-        }
-        if (game.state == 'scores') {
-            myPlayer.response = '';
-            myPlayer.vote = '';
-            updatePlayer(myPlayer);
-        }
-        if (game.state == 'thanks') {
-            window.location.href = "index.html";
-        }
-        await sleep(1000);
-    }
-}
+let ws;
 
 async function joinGame() {
     let name = document.getElementById("name").value;
     let roomCode = document.getElementById("room").value;
 
+    if (name === "" || roomCode.length !== 4) {
+        alert("Please enter a name and room code");
+        return;
+    }
+
     myPlayer = {
         name: name.toUpperCase(),
         roomCode: roomCode.toUpperCase(),
-        response: '',
-        vote: '',
-        score: 0
+        responses: [],
+        votes: [],
+        score: 0,
+        imposter: false,
+        ws: null
     }
-    console.log("joining game");
-    let res = await fetch('/player/' + myPlayer.name + '/' + myPlayer.roomCode, { method: 'POST', body: JSON.stringify(myPlayer), headers: { 'Content-Type': 'application/json' } }).then(response => response.json());
-    console.log(res);
-    if (res.success) {
-        runGame();
-    } else {
-        alert('Invalid room code');
+    let response = await fetch('/game/' + roomCode).then(response => response.json());
+    response = JSON.parse(response);
+    if (!response.success) {
+        alert("Invalid room code");
+        return;
+    }
+    playGame();
+}
+
+function blankScreen() {
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1>';
+}
+
+function nextQuestion() {
+    let response = document.getElementById("response");
+    if (response !== null) {
+        myPlayer.responses.push(response.value);
+    }
+    if (myPlayer.questions.length === 0) {
+        ws.send(JSON.stringify({ messageType: "player-response", roomCode: myPlayer.roomCode, player: myPlayer }));
+        blankScreen();
+        return;
+    }
+    let question = myPlayer.questions.pop();
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><h2>' + question + '</h2><input type="text" id="response" name="response" placeholder="RESPOND HERE"><br><p onclick="nextQuestion()"> NEXT</p>';
+}
+
+function vote(playerNames) {
+    var mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><br>';
+    for (let name of playerNames) {
+        mainElements.innerHTML += '<p id="'+name+'" onclick="postVote()">' + name + '</p><br>';
     }
 }
 
-async function getGame() {
-    return await fetch('/game/' + myPlayer.roomCode).then(response => response.json());
+function postVote() {
+    let playerName = event.target.id;
+    ws.send(JSON.stringify({ messageType: "player-vote", roomCode: myPlayer.roomCode, player: myPlayer, vote: playerName}));
+    blankScreen();
+}
+
+async function playGame() {
+    ws = new WebSocket('wss://localhost:4000');
+    await sleep(500);
+    ws.send(JSON.stringify({ messageType: "join-game", roomCode: myPlayer.roomCode, player: myPlayer }));
+    ws.addEventListener('message', event => {
+        let message = JSON.parse(event.data);
+        if (message.messageType === 'game-joined') {
+            blankScreen();
+        } else if (message.messageType === 'responding') {
+            console.log('Responding');
+            myPlayer.questions = message.questions;
+            nextQuestion();
+        } else if (message.messageType === 'next-vote') {
+            playerNames = message.playerNames;
+            vote(playerNames);
+        } else if (message.messageType === 'end-game') {
+            window.location.href = "game-select.html";
+        }
+    });
 }
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function toWaitingScreen() {
-    let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><h2> Waiting...</h2>';
-}
-
-async function toResponseScreen() {
-    await sleep(5000);
-    let game = await getGame();
-    myPlayer = game.players.find(player => player.name == myPlayer.name);
-
-
-    let mainElements = document.querySelector("main");
-    if (game.round != 3 && myPlayer.responses.length < 3) {
-        let index = myPlayer.responses.length;
-        mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><h2>' + myPlayer.questions[index] + '</h2><input type="text" id="response" name="response" placeholder="RESPOND HERE"><br><p onclick="nextQuestion()"> NEXT</p>';
-    } else {
-        mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><h2> Waiting...</h2>';
-    }
-}
-
-async function toVotingScreen() {
-    var mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>' + myPlayer.name + '</h1><br>';
-
-    if (myPlayer.vote == '') {
-        let game = await getGame();
-        let players = game.players;
-        for (let player of players) {
-            mainElements.innerHTML += '<p id="post-vote" onclick="postVote()">' + player.name + '</p><br>';
-        }
-    } else {
-        mainElements.innerHTML += '<h2> Waiting...</h2>';
-    }
-}
-
-async function nextQuestion() {
-    let response = document.getElementById("response").value;
-    console.log(myPlayer);
-    myPlayer.responses.push(response);
-    updatePlayer(myPlayer);
-}
-
-async function postVote() {
-    let playerName = document.getElementById("post-vote").innerText;
-    myPlayer.vote = playerName;
-
-    let game = await getGame();
-    for (let player of game.players) {
-        if (player.name == myPlayer.vote && player.imposter) {
-            myPlayer.score += 500;
-        }
-    }
-    updatePlayer(myPlayer);
-}
-
-function updatePlayer(player) {
-    fetch('/player/' + player.name + '/' + player.roomCode, { method: 'PUT', body: JSON.stringify(player), headers: { 'Content-Type': 'application/json' } });
 }

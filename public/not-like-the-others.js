@@ -1,272 +1,192 @@
-const roomCode = createGame();
+const ws = new WebSocket('wss://localhost:4000');
+let roomCode;
 
-function createGame() {
-    let code = uuid().toUpperCase();
-    fetch('/game/' + code, { method: 'POST' });
-    return code;
-}
+waitingRoom();
 
-// main function
-async function NotLikeTheOthers(numRounds) {
-    await toHostWaiting();
-    await toHostInstruction();
-    for (let i = 1; i <= numRounds; i++) {
-        await toRound(i);
-        await toHostResponse();
-        await toHostVoting();
-        await toHostScores();
+ws.addEventListener('message', async event => {
+    let message = JSON.parse(event.data);
+    if (message.messageType === 'player-joined') {
+        let playerName = message.playerName;
+        console.log('Player' + playerName + 'joined');
+        let grid = document.querySelector(".grid");
+        grid.innerHTML += '<p class="player">' + playerName + '</p>';
+    } else if (message.messageType === 'responding') {
+        let playerNames = message.playerNames;
+        toHostResponse(playerNames);
+    } else if (message.messageType === 'player-response') {
+        let playerName = message.player;
+        let playersFinished = document.getElementById("playersFinished");
+        playersFinished.innerHTML += '<li>' + playerName + '</li>';
+        // Remove Player from playersWorking
+        let playesrWorking = document.getElementById("playersWorking");
+        let players = playesrWorking.getElementsByTagName("li");
+        for (let player of players) {
+            if (player.innerText === playerName) {
+                player.remove();
+                break;
+            }
+        }
+    } else if (message.messageType === 'All players responded') {
+        getReadyToVote();
+    } else if (message.messageType === 'voting') {
+        let votingData = message.votingData;
+        toHostVote(votingData, 3);
+    } else if (message.messageType === 'All players voted') {
+        getReadyToVote();
+    } else if (message.messageType === 'results') {
+        let playerData = message.playerData;
+        toHostResults(playerData); 
     }
-    await toThanks();
-    deleteGame();
-    window.location.replace("game-select.html");
+});
+
+async function createGame() {
+    let game = await fetch('/game', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(response => response.json());
+    return JSON.parse(game);
 }
 
-// Activities
-async function toRound(roundNum) {
-    updateGameRound(roundNum);
+function displayRoomCode(roomCode) {
+    document.getElementById('room-code').innerText = 'ROOM CODE: ' + roomCode;
+}
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitingRoom() {
+    let game = await createGame();
+    roomCode = game.roomCode;
+    displayRoomCode(game.roomCode);
+    ws.send(JSON.stringify({ messageType: "create-host", roomCode: game.roomCode }));
+}
+
+function toHostInstuction() {
     let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1 style="font-size: 10vw;">Round ' + roundNum + '</h1><h1 id="roundAnimation">3</h1>'
+    mainElements.innerHTML = '<h3>How to Play:</h3><iframe width="560" height="315" src="https://www.youtube.com/embed/slRDw9MVxFg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><p class="play" onclick="toRound(1);">NEXT</p><br>';
+}
+
+async function toHostResponse(playerNames) {
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<aside id="clock">Time Left: 60</aside><div><h3>Finshed: </h3><ul id="playersFinished"></ul></div><br><div><h3>Still Working: </h3><ul id="playersWorking"></ul></div>';
+
+    let playersWorking = document.getElementById("playersWorking");
+    for (let playerName of playerNames) {
+        playersWorking.innerHTML += '<li>' + playerName + '</li>';
+    }
+
+    for (let i = 60; i >= 1; i--) {
+        // Update clock
+        let clock = document.getElementById("clock");
+        if (clock === null) {
+            return;
+        }
+        clock.innerText = 'Time Left: ' + i;
+        await sleep(1000);
+    }
+    getReadyToVote();
+}
+
+async function toHostVote(votingData, numQuestions) {
+    let mainElements = document.querySelector("main");
+
+    for (let i=1; i<=numQuestions; i++) {
+        ws.send(JSON.stringify({ messageType: "next-vote", roomCode: roomCode }));
+
+        mainElements.innerHTML = '<aside id="clock">Time Left: 15</aside><h3>Which one is not like the others?</h3><div class="grid">';
+
+        let grid = document.querySelector(".grid");
+        for (let player of votingData) {
+            if (player.responses.length > 0) {
+                let response = player.responses.pop(0);
+                grid.innerHTML += '<p class="response">' + player.name + ': ' + response + '</p>';
+            } else {
+                grid.innerHTML += '<p class="response">' + player.name + ': ' + 'NO RESPONSE :(' + '</p>';
+            }
+        }
+
+        mainElements.innerHTML += '</div><p>Vote on your device now!</p>';
+
+        for (let i = 4; i >= 1; i--) {
+            let clock = document.getElementById("clock");
+            if (clock === null) {
+                return;
+            }
+            clock.innerText = 'Time Left: ' + i;
+            await sleep(1000);
+        }
+        if (i === numQuestions) {
+            mainElements.innerHTML = '<h1 style="font-size: 10vw;">Results</h1>';
+            await sleep(3000);
+            ws.send(JSON.stringify({ messageType: "results", roomCode: roomCode }));
+            break;
+        }
+        mainElements.innerHTML = '<h1 style="font-size: 10vw;">Next Question</h1>';
+        await sleep(3000);
+    }
+}
+async function toThanks() {
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1>Thanks for Playing!</h1><a class="play" href="game-select.html"> HOME</a><br>';
+    ws.send(JSON.stringify({ messageType: "end-game", roomCode: roomCode }));
+    await sleep(10000);
+    window.location.href = "game-select.html";
+}
+
+async function toHostResults(playerData) {
+    let imposter = null;
+    for (let player of playerData) {
+        if (player.imposter) {
+            imposter = player;
+            break;
+        }
+    }
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1 style="font-size: 10vw;">Who was chosen to be Not Like the Others?</h1>';
+    await sleep(3000);
+    mainElements.innerHTML = '<h1 style="font-size: 10vw;">Drum Roll Please..</h1>';
+    await sleep(3000);
+    mainElements.innerHTML = '<h1 style="font-size: 10vw;">' + imposter.name + '!</h1>';
+
+    await sleep(3000);
+
+    mainElements.innerHTML = '<h3>Scores:</h3><div class="grid">';
+    let grid = document.querySelector(".grid");
+    
+    for (let player of playerData) {
+        grid.innerHTML += '<p class="player">' + player.name + ': ' + player.score + '</p>';
+    }
+
+    await sleep(5000);
+    if (playerData[0].round === 3) {
+        toThanks();
+    } else {
+        toRound(playerData[0].round + 1);
+    }
+}
+
+
+// Inbetween Animation
+
+async function toRound(roundNumber) {
+    console.log('Round ' + roundNumber + ' started');
+    let mainElements = document.querySelector("main");
+    mainElements.innerHTML = '<h1 style="font-size: 10vw;">Round ' + roundNumber + '</h1><h1 id="roundAnimation">3</h1>'
     await sleep(1000);
     let roundAnimation = document.getElementById("roundAnimation");
     roundAnimation.innerText = '2';
     await sleep(1000);
     roundAnimation.innerText = '1';
     await sleep(1000);
+    ws.send(JSON.stringify({ messageType: "responding", roomCode: roomCode }));
 }
 
-async function toHostWaiting() {
-    let roomElement = document.getElementsByClassName("room");
-    roomElement[0].innerText = 'Room Code: ' + roomCode;
-
-    let grid = document.querySelector(".grid");
-    await sleep(1000)
-    let game = await getGame();
-    console.log(game);
-    while (game.state == "waiting") {
-        game = await getGame();
-        let players = game.players;
-        grid.innerHTML = '';
-        for (let player of players) {
-            grid.innerHTML += '<p class="player">' + player.name + '</p>';
-        }
-        await sleep(1000);
-    }
-}
-
-async function toHostInstruction() {
+async function getReadyToVote() {
     let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h3>How to Play:</h3><iframe width="560" height="315" src="https://www.youtube.com/embed/slRDw9MVxFg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe><br><p class="play" onclick="updateGameState(\'responding\');">SKIP</p><br>';
-    let game = await getGame();
-    while (game.state == "instruction") {
-        game = await getGame();
-        await sleep(1000);
-    }
+    mainElements.innerHTML = '<h1 style="font-size: 10vw;">Get Ready to Vote!</h1><h1 id="roundAnimation">3</h1>'
+    await sleep(1000);
+    let roundAnimation = document.getElementById("roundAnimation");
+    roundAnimation.innerText = '2';
+    await sleep(1000);
+    roundAnimation.innerText = '1';
+    await sleep(1000);
+    ws.send(JSON.stringify({ messageType: "voting", roomCode: roomCode }));
 }
-
-async function toHostResponse() {
-
-    updateGameState("responding");
-
-    sendQuestions();
-
-    let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<aside id="clock">Time Left: 60</aside><div><h3>Finshed: </h3><ul id="playersFinished"></ul></div><br><div><h3>Still Working: </h3><ul id="playersWorking"></ul></div>';
-
-    let playersFinished = document.getElementById("playersFinished");
-    let playersWorking = document.getElementById("playersWorking");
-
-    let clock = document.getElementById("clock");
-    for (let i = 60; i >= 1; i--) {
-
-        // Check if game state has changed
-        let game = await getGame();
-        let players = game.players;
-
-        // Check if all players have responded
-        if (await everyoneResponded()) {
-            console.log("All players have responded");
-            return;
-        }
-
-        // Update players finished and working
-        playersFinished.innerHTML = '';
-        playersWorking.innerHTML = '';
-        for (let player of players) {
-            if (player.response != '') {
-                playersFinished.innerHTML += '<li>' + player.name + '</li>';
-            } else {
-                playersWorking.innerHTML += '<li>' + player.name + '</li>';
-            }
-        }
-
-        // Update clock
-        clock.innerText = 'Time Left: ' + i;
-        await sleep(1000);
-    }
-}
-
-async function toHostVoting() {
-
-    updateGameState("voting");
-
-    let mainElements = document.querySelector("main");
-
-    mainElements.innerHTML = '<aside id="clock">Time Left: 15</aside><h3>Which one is not like the others?</h3><div class="grid">';
-
-    let grid = document.querySelector(".grid");
-
-
-    let game = await getGame();
-    let players = game.players;
-
-    for (let player of players) {
-        if (player.response != '') {
-            grid.innerHTML += '<p class="response">' + player.name + ': ' + player.response + '</p>';
-        } else {
-            grid.innerHTML += '<p class="response">' + player.name + ': ' + 'NO RESPONSE :(' + '</p>';
-        }
-    }
-
-    mainElements.innerHTML += '</div><p>Vote on your device now!</p>';
-
-    let clock = document.getElementById("clock");
-    for (let i = 20; i >= 1; i--) {
-        clock.innerText = 'Time Left: ' + i;
-        if (await everyoneVoted()) {
-            console.log("All players have voted");
-            return;
-        }
-        await sleep(1000);
-    }
-}
-
-async function toHostScores() {
-
-    updateGameState("scores");
-
-    let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h3>Scores:</h3><div class="grid">';
-    let grid = document.querySelector(".grid");
-
-    let game = await getGame();
-    let players = game.players;
-    for (let player of players) {
-        grid.innerHTML += '<p class="player">' + player.name + ': ' + player.score + '</p>';
-    }
-
-    await sleep(5000);
-}
-
-async function toThanks() {
-
-    updateGameState("thanks");
-
-    let mainElements = document.querySelector("main");
-    mainElements.innerHTML = '<h1>Thanks for Playing!</h1><a class="play" href="game-select.html"> BACK</a><br>';
-    await sleep(10000);
-}
-
-// Helper Functions
-
-
-async function everyoneResponded() {
-    let game = await getGame();
-    let players = game.players;
-    for (let player of players) {
-        if (game.round != 3 && player.responses[2] == undefined) {
-            return false;
-        }
-        if (game.round == 3 && player.responses[0] == undefined) {
-            return false;
-        }
-    }
-    return true;
-}
-
-async function everyoneVoted() {
-    let game = await getGame();
-    let players = game.players;
-    for (let player of players) {
-        if (player.vote) {
-            return false;
-        }
-    }
-    return true;
-}
-
-function uuid() {
-    return (Math.random() + 1).toString(36).substring(2, 6);
-}
-
-function openFullscreen() {
-    let body = document.documentElement;
-    if (body.requestFullscreen) {
-        body.requestFullscreen();
-    } else if (body.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
-    } else if (body.msRequestFullscreen) { /* IE11 */
-        body.msRequestFullscreen();
-    }
-}
-
-async function getGame() {
-    return fetch('/game/' + roomCode).then(response => response.json());
-}
-
-async function updateGame(game) {
-    console.log("adding questions");
-    console.log(game);
-    fetch('/game/' + roomCode, { method: 'PUT', body: JSON.stringify(game), cors: 'no-cors', headers: { 'Content-Type': 'application/json' } });
-}
-
-async function deleteGame() {
-    fetch('/game/' + roomCode, { method: 'DELETE', cors: 'no-cors' });
-}
-
-async function sendQuestions() {
-    let game = await getGame();
-    let questions = [];
-    let fakeQuestions = [];
-    for (let i = 0; i < 3; i++) {
-        questionPair = game.questions.pop(i);
-        questions.push(questionPair.question);
-        fakeQuestions.push(questionPair.fakeQuestion);
-    }
-
-    console.log(questions);
-    console.log(fakeQuestions);
-
-    let players = game.players;
-    let index = Math.floor(Math.random() * players.length); // Randomly choose imposter
-    players[index].imposter = true;
-
-    for (let player of players) {
-        if (player.imposter) {
-            player.questions = fakeQuestions;
-        } else {
-            player.questions = questions;
-        }
-    }
-    updateGame(game);
-}
-
-async function updateGameState(state) {
-    let game = await getGame();
-    game.state = state;
-    fetch('/game/' + roomCode, { method: 'PUT', body: JSON.stringify(game), cors: 'no-cors', headers: { 'Content-Type': 'application/json' } });
-}
-
-async function updateGameRound(round) {
-    let game = await getGame();
-    game.round = round;
-    fetch('/game/' + roomCode, { method: 'PUT', body: JSON.stringify(game), cors: 'no-cors', headers: { 'Content-Type': 'application/json' } });
-}
-
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-NotLikeTheOthers(3);
