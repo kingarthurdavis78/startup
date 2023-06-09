@@ -1,4 +1,4 @@
-const ws = new WebSocket('wss://localhost:4000');
+const ws = new WebSocket('wss://'+window.location.host+'/ws');
 let roomCode;
 
 waitingRoom();

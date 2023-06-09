@@ -63,8 +63,8 @@ function postVote() {
 }
 
 async function playGame() {
-    ws = new WebSocket('wss://localhost:4000');
-    await sleep(500);
+    ws = new WebSocket('wss://'+window.location.host+'/ws');
+    await sleep(1000);
     ws.send(JSON.stringify({ messageType: "join-game", roomCode: myPlayer.roomCode, player: myPlayer }));
     ws.addEventListener('message', event => {
         let message = JSON.parse(event.data);
