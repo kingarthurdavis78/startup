@@ -93,15 +93,5 @@ Restricts functionality - You cannot host a game until you have logged in.
 
 ---
 
-## Design Images
-
-### Workflow
-![Workflow](images/gpt-party-pack-2.png)
-
-### Game Screenshots
-![Home](images/gpt-party-pack-3.png)
-
-![Not Like The Others](images/gpt-party-pack-5.png)
-
 
 
