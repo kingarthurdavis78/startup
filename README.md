@@ -1,10 +1,4 @@
-# THE ARTificial PARTY PACK
-
-The ARTificial Party Pack is a collection of party games infused with the power of the world-renowned language model, GPT!
-
-## Games
-
-### Not Like The Others (I'll start with this one)
+### Not Like The Others
 
 Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot an imposter among a sea of players through analysis and shrewd observation!
 
@@ -33,8 +27,8 @@ I am going to use the required technologies in the following ways.
   - retrieving responses
   - submitting votes
   - retrieving vote status
-- **DB** - Store users, responses, votes, and score in database.
-- **Login** - Register and login users. Credentials securely stored in database. Cant join game without login
+- **DB** - Store users, responses, votes, and scores in the database.
+- **Login** - Register and log in users. Credentials are securely stored in the database. Can't join game without login
 - **WebSocket** - As each user votes, their votes are broadcast to all other users.
 - **React** - Application ported to use the React web framework.
 
@@ -42,22 +36,22 @@ I am going to use the required technologies in the following ways.
 
 ## HTML deliverable
 
-For this deliverable I added the application structure.
+For this deliverable, I added the application structure.
 
-- **HTML pages** - 14 HTML pages that represent the ability to join a game, choose a game to host, respond to a prompt, vote, display the scoreboard,login, and create an account.
+- **HTML pages** - 14 HTML pages that represent the ability to join a game, choose a game to host, respond to a prompt, vote, display the scoreboard, login, and create an account.
 - **Links** - Game Selection -> Waiting Room -> Game Instruction -> Response -> Voting -> Display Score -> Response or index
-- **Text** - All of the questions are represented as textual elements. The about section hosts a lot of text as well.
-- **Images** - Logo in the top left of the page. For each of the games there is an associated crown icon.
-- **Login** - Input box and submit button for login. Also option to create an account.
+- **Text** - All of the questions are represented as textual elements. The About section hosts a lot of text as well.
+- **Images** - Logo in the top left of the page. For each of the games, there is an associated crown icon.
+- **Login** - Input box and submit button for login. Also, the option to create an account.
 - **Database** - The voting choices represent data pulled from the database. Questions are pulled from a database.
-- **WebSocket** - The count of voting results represent the tally of realtime votes.
+- **WebSocket** - The count of voting results represents the tally of real-time votes.
 
 ## CSS deliverable
 
-For this deliverable I properly styled the application into its final appearance.
+For this deliverable, I properly styled the application into its final appearance.
 
 - Header, footer, and main content body
-- **Navigation elements** - I removed text decoration
+- **Navigation elements** - I removed text-decoration
 - **Responsive to window resizing** - My app looks great on all window sizes and devices. 
 - **Application elements** - Used good contrast and whitespace
 - **Application text content** - Consistent font size and color
@@ -73,7 +67,7 @@ application logic (User)- The player creates a Player object and joins a server.
 
 ## Service deliverable 
 
-For this deliverable, I created an HTTP service to host my frontend and provide backend endpoints.
+For this deliverable, I created an HTTP service to host my front end and provide backend endpoints.
 
 Node.js/Express HTTP service - done!
 Static middleware for the front end - done!
