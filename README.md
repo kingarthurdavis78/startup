@@ -1,30 +1,12 @@
 # THE ARTificial PARTY PACK
 
-The ARTificial Party Pack is a collection of party games infused with the power of the world renound language model, GPT!
+The ARTificial Party Pack is a collection of party games infused with the power of the world-renowned language model, GPT!
 
 ## Games
 
 ### Not Like The Others (I'll start with this one)
 
 Step into a world of deception and deduction with 'Not Like The Others', the game that challenges you to spot an imposter among a sea of players through analysis and shrewd observation!
-
----
-
-### GPT Trivia
-
-Welcome to GPT Trivia! Our game uses GPT's state-of-the-art machine learning technology to constantly generate new and reliable questions, so you'll never run out of challenging and exciting trivia to test your knowledge. Compete against your friends and family to see who can get the highest score!
-
----
-
-### Wit Spit
-
-Wit Spit is a game of wit and speed where players must come up with the most creative and hilarious responses to a given prompt. The player with the most upvotes becomes the Wit Spit Champion!
-
----
-
-### Definitionary
-
-Definitionary is the ultimate word game where players are challenged to come up with the most convincing definition for a random word. Players then pick which definition they think is the most accurate and bonus points are awarded to those that pick the actual definition! The player with the most votes wins!
 
 ---
 ### Key features
@@ -34,7 +16,7 @@ Definitionary is the ultimate word game where players are challenged to come up 
 - Use GPT to generate questions
 - Prompt the user for a response to a question
 - Display responses from other users
-- Users vote on other user's respsonses
+- Users vote on other user's responses
 - Results are persistently stored
 
 ---
@@ -86,29 +68,29 @@ For this deliverable I properly styled the application into its final appearance
 login - When you press enter or the login button it creates a User object that is ready to be sent to the server
 database - not implemented yet
 WebSocket - not implemented yet
-application logic (Host)- Once you start the game, it takes the host through three rounds. Each round consists of a user response period, voting period, and then a dispay of the scoreboard. At the end of the game it takes the host back to the game select menu.
+Application logic (Host)- Once you start the game, it takes the host through three rounds. Each round consists of a user response period, a voting period, and then a display of the scoreboard. At the end of the game, it takes the host back to the game select menu.
 application logic (User)- The player creates a Player object and joins a server. The player object is how responses and votes are sent to the server. As the game progresses the user provides a response and a vote for each round.
 
 ## Service deliverable 
 
-For this deliverable I created an HTTP service to host my frontend and provide backend endpoints.
+For this deliverable, I created an HTTP service to host my frontend and provide backend endpoints.
 
 Node.js/Express HTTP service - done!
-Static middleware for frontend - done!
-Calls to third party endpoints - I don't need this for my website
-Backend service endpoints - Placeholders for login that stores the current user on the server. Endpoints for player and game state.
+Static middleware for the front end - done!
+Calls to third-party endpoints - I don't need this for my website
+Backend service endpoints - Placeholders for login that store the current user on the server. Endpoints for player and game state.
 Frontend calls service endpoints - I did this using the fetch function.
 
 ## DB deliverable
-For this deliverable I stored and retrieved data from MongoDB.
+For this deliverable, I stored and retrieved data from MongoDB.
 
 MongoDB Atlas database created - done!
 Populated database with game questions
-Endpoints for data - My stubbed out endpoints now process the data and send it to Mongo. 
+Endpoints for data - My stubbed-out endpoints now process the data and send it to Mongo. 
 Stores data in MongoDB - done!
 
 ## Login deliverable
-For this deliverable I added user registration and authentication.
+For this deliverable, I added user registration and authentication.
 
 User registration - Creates a new account in the database.
 existing user - Verifies the user's name and password from data stored in the database
@@ -125,9 +107,7 @@ Restricts functionality - You cannot host a game until you have logged in.
 ### Game Screenshots
 ![Home](images/gpt-party-pack-3.png)
 
-![GPT Trivia](images/gpt-party-pack-4.png)
-
 ![Not Like The Others](images/gpt-party-pack-5.png)
 
-![Wit Spit](images/gpt-party-pack-6.png)
+
 
